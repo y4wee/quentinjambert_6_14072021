@@ -1,11 +1,15 @@
+// plugins neccessaires
 const express = require('express');
 const router = express.Router();
 
-const auth = require('../middleware/auth');
-const multer = require('../middleware/multer-config');
+// importation des middleware
+const auth = require('../middleware/auth'); //gestion des autorisations
+const multer = require('../middleware/multer-config'); //gestion des fichiers images
 
+// importation controller
 const sauceCtrl = require('../controllers/sauce');
 
+//declare les routes possible vers /api/sauces
 router.post('/', auth, multer, sauceCtrl.createSauce);
 
 router.put('/:id', auth, multer, sauceCtrl.modifySauce);

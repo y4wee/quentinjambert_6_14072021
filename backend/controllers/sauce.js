@@ -14,11 +14,23 @@ exports.createSauce = (req, res, next) => {
 };
 
 exports.modifySauce = (req, res, next) => {
-  const sauceObject = req.file ?
-    {
+  let sauceObject
+  if (req.file) {
+    Sauce.findOne({ _id: req.params.id })
+      .then(sauce => {
+        const filename = sauce.imageUrl.split('/images/')[1];
+        fs.unlink(`images/${filename}`, (err) => {
+          if (err) throw err;
+        });
+      })
+      .catch(error => res.status(500).json({ error }));
+    sauceObject = {
       ...JSON.parse(req.body.sauce),
       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-    } : { ...req.body };
+    }
+  } else {
+    sauceObject = { ...req.body };
+  }
   Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
     .then(() => res.status(200).json({ message: 'sauce modifiée !'}))
     .catch(error => res.status(400).json({ error }));
@@ -72,7 +84,7 @@ exports.likeSauce = (req, res, next) => {
   } else {
     Sauce.findOne({ _id: sauceId })
       .then((sauce) => {
-        if (sauce.usersLiked.find(user => user === req.body.userId)) {
+        if (sauce.usersLiked.find(user => user = req.body.userId)) {
           Sauce.updateMany(
             { _id: sauceId },
             { $inc: {likes: -1}, $pull: {usersLiked: user} }

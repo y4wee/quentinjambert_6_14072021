@@ -11,7 +11,7 @@ exports.signup = (req, res, next) => {
           email: req.body.email,
           password: hash
         });
-        user.save() // sauvegarde les les informations utilisateur
+        user.save() // sauvegarde les informations utilisateur
           .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
           .catch(error => res.status(400).json({ error }));
       })

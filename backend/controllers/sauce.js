@@ -26,11 +26,11 @@ exports.modifySauce = (req, res, next) => {
           if (err) throw err;
         });
       })
+      .then( sauceObject = { // nouvel objet modifié avec la nouvelle image
+        ...JSON.parse(req.body.sauce),
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+      })
       .catch(error => res.status(500).json({ error }));
-    sauceObject = { // nouvel objet modifié avec la nouvelle image
-      ...JSON.parse(req.body.sauce),
-      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-    }
   } else { //si aucun changement image juste changer avec le corps de la requete directement en json
     sauceObject = { ...req.body };
   }

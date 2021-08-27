@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const mongoSanitize = require('express-mongo-sanitize');
 const mongoose = require('mongoose');
 const path = require('path');
+const dotenv = require("dotenv");
 
 //importation des fichiers routes
 const userRoutes = require('./routes/user');
@@ -11,9 +12,10 @@ const sauceRoutes = require('./routes/sauce');
 
 // mise en place de la fonction express()
 const app = express();
+dotenv.config();
 
 // adresse de connexion pour la bdd MongoDB
-mongoose.connect('mongodb+srv://user:v7E3JthKEdU4bbzR@clustertest.4jtzg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
+mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@clustertest.4jtzg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
   { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))

@@ -74,7 +74,7 @@ exports.likeSauce = (req, res, next) => {
   const sauceId = req.params.id;
   
   if (like == 1) { // si like
-    Sauce.updateMany( //mets a jour la sauce en question par son id 
+    Sauce.updateOne( //mets a jour la sauce en question par son id 
       { _id: sauceId },
       { $inc: {likes: 1}, $push: {usersLiked: user} } // change le nombre de like et mets le userId dans les tableau des liked
     )
@@ -82,7 +82,7 @@ exports.likeSauce = (req, res, next) => {
     .catch(error => res.status(400).json({ error: error }));
   }
   else if (like == -1) { // si dislike
-    Sauce.updateMany( //mets a jour la sauce en question par son id 
+    Sauce.updateOne( //mets a jour la sauce en question par son id 
       { _id: sauceId },
       { $inc: {dislikes: 1}, $push: {usersDisliked: user} } // change le nombre de dislike et mets le userId dans les tableau des disliked
     )
@@ -92,14 +92,14 @@ exports.likeSauce = (req, res, next) => {
     Sauce.findOne({ _id: sauceId }) // on cherche la sauce en question par son id
       .then((sauce) => {
         if (sauce.usersLiked.find(user => user = req.body.userId)) { // on verifie si le userId est present dans le tableau des liked
-          Sauce.updateMany(
+          Sauce.updateOne(
             { _id: sauceId },
             { $inc: {likes: -1}, $pull: {usersLiked: user} } // si oui on enleve un like et le userId du tableau des liked
           )
           .then(() => res.status(200).json({ message: "enlevé un like"}))
           .catch(error => res.status(400).json({ error: error }));
         } else { // sinon  le user doit etre dans les disliked
-          Sauce.updateMany(
+          Sauce.updateOne(
             { _id: sauceId },
             { $inc: {dislikes: -1}, $pull: {usersDisliked: user} } // on enleve un dislike et le userId du tableau des disliked
           )

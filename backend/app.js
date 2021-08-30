@@ -50,7 +50,7 @@ app.use(helmet());
 app.use(xssClean());
 
 
-// surveiller la boucle d'événement
+// surveiller la boucle d'événement, si le trafic reseau est trop important
 app.use(function(req, res, next) {
   if (toobusy()) {
       // log if you see necessary

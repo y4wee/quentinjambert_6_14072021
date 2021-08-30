@@ -1,10 +1,12 @@
 //importation des plugins
 const express = require('express');
-const bodyParser = require('body-parser');
-const mongoSanitize = require('express-mongo-sanitize');
 const mongoose = require('mongoose');
-const path = require('path');
 const dotenv = require("dotenv");
+const path = require('path');
+const helmet = require("helmet");
+const mongoSanitize = require('express-mongo-sanitize');
+const xssClean = require('xss-clean');
+const hpp = require('hpp');
 
 //importation des fichiers routes
 const userRoutes = require('./routes/user');
@@ -30,11 +32,19 @@ app.use((req, res, next) => {
 });
 
 // parser automatiquement le coprs de la reponse
-app.use(bodyParser.json());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// supprime les clé json $
+// éviter les attaques de pollution des paramètres HTTP
+app.use(hpp());
+// supprime certaines clé et characters, protege contre les injexion, attaque XSS
 app.use(mongoSanitize());
+// définit des en-têtes de réponse HTTP liés à la sécurité pour se protéger contre certaines vulnérabilités Web bien connues
+app.use(helmet());
+// nettoie les entrées utilisateur provenant du corps de la requête POST ( req.body), de requête GET ( req.query) et des paramètres d'URL ( req.params).
+app.use(xssClean());
 
+// utilisé pour empêcher les adresses IP de faire des demandes répétées aux points de terminaison de l'API
 
 // declaration des routes de l'api
 app.use('/images', express.static(path.join(__dirname, 'images'))); //dossier static pour ajout image

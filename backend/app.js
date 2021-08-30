@@ -1,8 +1,12 @@
+"use strict";
 //importation des plugins
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require("dotenv");
 const path = require('path');
+
+const toobusy = require('toobusy-js');
+
 const helmet = require("helmet");
 const mongoSanitize = require('express-mongo-sanitize');
 const xssClean = require('xss-clean');
@@ -15,6 +19,7 @@ const sauceRoutes = require('./routes/sauce');
 // mise en place de la fonction express()
 const app = express();
 dotenv.config();
+
 
 // adresse de connexion pour la bdd MongoDB
 mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@clustertest.4jtzg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
@@ -44,7 +49,16 @@ app.use(helmet());
 // nettoie les entrées utilisateur provenant du corps de la requête POST ( req.body), de requête GET ( req.query) et des paramètres d'URL ( req.params).
 app.use(xssClean());
 
-// utilisé pour empêcher les adresses IP de faire des demandes répétées aux points de terminaison de l'API
+
+// surveiller la boucle d'événement
+app.use(function(req, res, next) {
+  if (toobusy()) {
+      // log if you see necessary
+      res.send(503, "Server Too Busy");
+  } else {
+  next();
+  }
+});
 
 // declaration des routes de l'api
 app.use('/images', express.static(path.join(__dirname, 'images'))); //dossier static pour ajout image

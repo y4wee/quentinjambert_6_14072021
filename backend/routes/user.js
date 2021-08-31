@@ -2,6 +2,8 @@
 const express = require('express');
 const router = express.Router();
 
+const validationPass = require("../middleware/pass");
+
 // utilisé pour empêcher les adresses IP de faire des demandes répétées aux points de terminaison de l'API
 const rateLimit = require('express-rate-limit');
 
@@ -16,7 +18,7 @@ const connexionLimiter = rateLimit({
   });
 
 //declare les routes possible vers /api/auth
-router.post('/signup', userCtrl.signup);
-router.post('/login',connexionLimiter, userCtrl.login);
+router.post('/signup', validationPass, userCtrl.signup);
+router.post('/login', connexionLimiter, userCtrl.login);
 
 module.exports = router;

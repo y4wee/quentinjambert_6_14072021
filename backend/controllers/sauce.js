@@ -43,14 +43,14 @@ exports.modifySauce = (req, res, next) => {
 exports.getOneSauce = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id })
       .then(sauce => res.status(200).json(sauce))
-      .catch(error => res.status(404).json({ error }));
+      .catch(error => res.status(500).json({ error }));
 };
 
 // controlleur qui renvoi toutes les sauces de la bdd
 exports.getAllSauces = (req, res, next) => {
     Sauce.find()
       .then(sauces => res.status(200).json(sauces))
-      .catch(error => res.status(400).json({ error }));
+      .catch(error => res.status(500).json({ error }));
 };
 
 // controlleur qui supprime une sauce de la bdd
@@ -79,7 +79,7 @@ exports.likeSauce = (req, res, next) => {
       { $inc: {likes: 1}, $push: {usersLiked: user} } // change le nombre de like et mets le userId dans les tableau des liked
     )
     .then(() => res.status(200).json({ message: "ajouté un like"}))
-    .catch(error => res.status(400).json({ error: error }));
+    .catch(error => res.status(500).json({ error: error }));
   }
   else if (like == -1) { // si dislike
     Sauce.updateOne( //mets a jour la sauce en question par son id 
@@ -87,7 +87,7 @@ exports.likeSauce = (req, res, next) => {
       { $inc: {dislikes: 1}, $push: {usersDisliked: user} } // change le nombre de dislike et mets le userId dans les tableau des disliked
     )
     .then(() => res.status(200).json({ message: "ajouté un dislike"}))
-    .catch(error => res.status(400).json({ error: error }));
+    .catch(error => res.status(500).json({ error: error }));
   } else { // si on veut enlever un like ou un dislike
     Sauce.findOne({ _id: sauceId }) // on cherche la sauce en question par son id
       .then((sauce) => {
@@ -107,6 +107,6 @@ exports.likeSauce = (req, res, next) => {
           .catch(error => res.status(400).json({ error: error }));
         }
       })
-      .catch(error => res.status(404).json({ error: error }));
+      .catch(error => res.status(500).json({ error: error }));
   }
 }
